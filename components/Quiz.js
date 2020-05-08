@@ -1,7 +1,16 @@
 export class quizQuestions {
-    constructor(statement, choices, correctChoice) {
+    constructor(statement, options, correctChoice, uniqueKey) {
         this.statement = statement
-        this.choices = choices
+        this.options = options
         this.correctChoice = correctChoice
+        this.uniqueKey = uniqueKey
+    }
+
+    get choices() {
+        return this.returnChoices()
+    }
+
+    returnChoices() {
+        return this.options
     }
 }

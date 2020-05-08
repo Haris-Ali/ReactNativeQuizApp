@@ -4,6 +4,7 @@ export const questions = [
     new quizQuestions(
         'What is capital of Pakistan?',
         ['Karachi', 'Islamabad', 'Lahore', 'Peshawar'],
-        'Islamabad'
+        'Islamabad',
+        Math.random().toString()
     )
 ]
