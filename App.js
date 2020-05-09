@@ -1,13 +1,29 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { questions } from './components/Questions'
+import ButtonComp from './components/NextButton'
 
 export default function App() {
   const [screen, setScreen] = useState('Start')
   const [getQuestions, setQuestions] = useState(questions)
-
+  const [score, setScore] = useState(0)
+  
   const changeScreen = () => {
     setScreen('Quiz')
+  }
+
+  const checkAnswer = (selectedOption, correctOption) => {
+    if (selectedOption === correctOption) {
+      Alert.alert("Your answer is correct!")
+      setScore(score + 1)
+    }
+    else {
+      Alert.alert("Your answer was incorrect! \nCorrect answer: " + correctOption)
+    }
+  }
+
+  const loadNextQuestion = () => {
+
   }
 
 
@@ -25,13 +41,29 @@ export default function App() {
     <View>
       <ScrollView style={quizStyles.scrollView}>
         {getQuestions.map((item, index) => 
-          <View>
+          <View key={item.uniqueKey} >
+            <View style={quizStyles.infoCont}>
+              <Text style={quizStyles.scoreText} >Score: {score}</Text>
+              <Text style={quizStyles.questionNum}>Question: {index + 1} / 5</Text>
+            </View>
             <Text style={quizStyles.statement}>{item.statement}</Text>
-            <TouchableOpacity key={item.uniqueKey} activeOpacity={0.7}>
-              <View style={quizStyles.choiceCont}>
-                <Text style={quizStyles.choiceText}>{item.choices}</Text>
-              </View>
-            </TouchableOpacity>
+            {item.options.map((optionItem, optionIndex) =>
+              <TouchableOpacity 
+                activeOpacity={0.7} 
+                onPress={() => checkAnswer(optionItem, item.correctChoice)}>
+                <View style={quizStyles.choiceCont}>
+                  <Text style={quizStyles.choiceText}>{optionIndex + 1}. {optionItem}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            <View style={quizStyles.buttonCont} >
+              <ButtonComp 
+                textValue="Next"
+                onPressEvent={loadNextQuestion}
+                color='#3C4245'
+                disabled={index === 5}
+              />
+            </View>
           </View>
         )}
       </ScrollView>
@@ -58,7 +90,7 @@ const styles = StyleSheet.create({
 
   titleText: {
     fontSize: 30,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
     paddingBottom: 50,
     textAlign: 'center'
   }, 
@@ -70,14 +102,35 @@ const styles = StyleSheet.create({
 const quizStyles = StyleSheet.create({
   scrollView: {
     width: '100%',
-    paddingTop: 300,
+    paddingTop: 200,
   }, 
+
+  infoCont: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+  },
+
+  scoreText: {
+    fontSize: 20,
+    fontFamily: 'serif',
+    paddingBottom: 40,
+    textAlign: 'center',
+    paddingLeft: 10,
+  },
+
+  questionNum: {
+    fontSize: 20,
+    fontFamily: 'serif',
+    paddingBottom: 40,
+    textAlign: 'center',
+    paddingRight: 10,
+  },
 
   statement: {
     fontSize: 24,
-    fontFamily: 'monospace',
+    fontFamily: 'serif',
     textAlign: 'center',
-    paddingBottom: 10,
+    paddingBottom: 20,
   },  
 
   choiceCont: {
@@ -93,7 +146,14 @@ const quizStyles = StyleSheet.create({
     fontSize: 24,
     color: 'white',
     padding: 12, 
-    fontFamily: 'monospace',
-  }
+    fontFamily: 'serif',
+  }, 
 
+  buttonCont: {
+    paddingTop: 40,
+    alignSelf: 'center',
+    width: 280,
+    height: 200,
+    alignItems: 'flex-end'
+  }, 
 })
