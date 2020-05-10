@@ -4,15 +4,19 @@ import { questions } from './components/Questions'
 import ButtonComp from './components/NextButton'
 
 export default function App() {
+  var questionID = 0
+  const [questionNum, setquestionNum] = useState(1)
   const [screen, setScreen] = useState('Start')
-  const [getQuestions, setQuestions] = useState(questions)
+  const [getQuestions, setQuestions] = useState(questions[questionID])
   const [score, setScore] = useState(0)
+  const [validate, setValidate] = useState(0)
   
   const changeScreen = () => {
     setScreen('Quiz')
   }
 
-  const checkAnswer = (selectedOption, correctOption) => {
+  const checkAnswer = (selectedOption, correctOption, allOptions) => {
+    setValidate(1)
     if (selectedOption === correctOption) {
       Alert.alert("Your answer is correct!")
       setScore(score + 1)
@@ -23,7 +27,9 @@ export default function App() {
   }
 
   const loadNextQuestion = () => {
-
+    questionID = questionID + 1
+    setquestionNum(questionNum + 1)
+    setQuestions(questions[questionID])
   }
 
 
@@ -40,32 +46,30 @@ export default function App() {
   const quizScreen = (
     <View>
       <ScrollView style={quizStyles.scrollView}>
-        {getQuestions.map((item, index) => 
-          <View key={item.uniqueKey} >
-            <View style={quizStyles.infoCont}>
-              <Text style={quizStyles.scoreText} >Score: {score}</Text>
-              <Text style={quizStyles.questionNum}>Question: {index + 1} / 5</Text>
-            </View>
-            <Text style={quizStyles.statement}>{item.statement}</Text>
-            {item.options.map((optionItem, optionIndex) =>
-              <TouchableOpacity 
-                activeOpacity={0.7} 
-                onPress={() => checkAnswer(optionItem, item.correctChoice)}>
-                <View style={quizStyles.choiceCont}>
-                  <Text style={quizStyles.choiceText}>{optionIndex + 1}. {optionItem}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            <View style={quizStyles.buttonCont} >
-              <ButtonComp 
-                textValue="Next"
-                onPressEvent={loadNextQuestion}
-                color='#3C4245'
-                disabled={index === 5}
-              />
-            </View>
+        <View>
+          <View style={quizStyles.infoCont}>
+            <Text style={quizStyles.scoreText} >Score: {score}</Text>
+            <Text style={quizStyles.questionNum}>Question: {questionNum} / 5</Text>
           </View>
-        )}
+          <Text style={quizStyles.statement}>{getQuestions.statement}</Text>
+          {getQuestions.options.map((optionItem, optionIndex) =>
+            <TouchableOpacity 
+              activeOpacity={0.7} 
+              onPress={() => checkAnswer(optionItem, getQuestions.correctChoice, getQuestions.options)}>
+              <View style={quizStyles.choiceCont}>
+                <Text style={quizStyles.choiceText}>{optionIndex + 1}. {optionItem}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          <View style={quizStyles.buttonCont} >
+            <ButtonComp 
+              textValue="Next"
+              onPressEvent={loadNextQuestion}
+              color='#06623B'
+              disabled={validate == 0}
+            />
+          </View>
+        </View>
       </ScrollView>
     </View>
   )

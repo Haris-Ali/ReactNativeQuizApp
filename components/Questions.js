@@ -6,5 +6,12 @@ export const questions = [
         ['Karachi', 'Islamabad', 'Lahore', 'Peshawar'],
         'Islamabad',
         Math.random().toString()
-    )
+    ), 
+
+    new quizQuestions(
+        'What is language of Pakistan?',
+        ['Urdu', 'Hindi', 'English', 'French'],
+        'Urdu',
+        Math.random().toString()
+    ), 
 ]
