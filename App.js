@@ -50,6 +50,7 @@ export default function App() {
     }
   }
 
+  
   /* Function which loads next question when next is pressed */
   const loadNextQuestion = () => {
     setquestionNum(questionNum + 1)
