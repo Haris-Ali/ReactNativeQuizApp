@@ -4,6 +4,7 @@ import { questions } from './components/Questions'
 import ButtonComp from './components/NextButton'
 
 export default function App() {
+  /* Loop to select 5 random questions from the question bank */
   const quizArray = []
   var addedIndex = []
   for (var i = 0; i < 5; i++) {
@@ -14,16 +15,21 @@ export default function App() {
     addedIndex.push(randomID)
     quizArray.push(questions[randomID])
   }
+
+  /* All the states being used in the app */
   const [questionNum, setquestionNum] = useState(0)
   const [screen, setScreen] = useState('Start')
   const [getQuestions, setQuestions] = useState(quizArray[0])
   const [score, setScore] = useState(0)
   const [validate, setValidate] = useState(0)
 
+
+  /* Function to change screen when start quiz is pressed */
   const changeScreen = () => {
     setScreen('Quiz')
   }
 
+  /* Function which checks if the answer is correct or not */
   const checkAnswer = (selectedOption, correctOption, allOptions) => {
     setValidate(1)
     if (selectedOption === correctOption) {
@@ -35,9 +41,19 @@ export default function App() {
     }
   }
 
+  /* Function which loads next question when next is pressed */
   const loadNextQuestion = () => {
     setquestionNum(questionNum + 1)
     setQuestions(questions[questionNum])
+    setValidate(0)
+  }
+
+  /* Function that resets all states when quiz is finished and goes to start screen */
+  const finishQuiz = () => {
+    setquestionNum(0)
+    setScreen('Start')
+    setQuestions(quizArray[0])
+    setScore(0)
     setValidate(0)
   }
 
@@ -54,7 +70,6 @@ export default function App() {
   /* Quiz component */
   const quizScreen = (
     <View>
-      {questionNum === 5 ? startScreen : 
       <ScrollView style={quizStyles.scrollView}>
         <View>
           <View style={quizStyles.infoCont}>
@@ -74,14 +89,13 @@ export default function App() {
           <View style={quizStyles.buttonCont}>
             <ButtonComp 
               textValue={questionNum === 4 ? 'Finish' : 'Next'}
-              onPressEvent={loadNextQuestion}
+              onPressEvent={questionNum === 4 ? finishQuiz : loadNextQuestion}
               color='#06623B'
               disabled={validate == 0}
             />
           </View>
         </View>
       </ScrollView>
-      }
     </View>
   )
 
