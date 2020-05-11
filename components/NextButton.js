@@ -7,7 +7,7 @@ export default function ButtonComp(props) {
     else 
         var buttonColor = props.color != undefined ? props.color : 'cornflowerblue'
     return (
-        <TouchableOpacity onPress={props.onPressEvent} disabled={props.disabled} >
+        <TouchableOpacity onPress={props.onPressEvent} disabled={props.disabled}>
             <View style={{...styles.button, backgroundColor: buttonColor}}>
                 <Text style={styles.buttonText}>{props.textValue}</Text>
             </View>

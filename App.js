@@ -4,13 +4,22 @@ import { questions } from './components/Questions'
 import ButtonComp from './components/NextButton'
 
 export default function App() {
-  var questionID = 0
-  const [questionNum, setquestionNum] = useState(1)
+  const quizArray = []
+  var addedIndex = []
+  for (var i = 0; i < 5; i++) {
+    let randomID
+    do {
+      randomID = Math.floor(Math.random() * questions.length)
+    } while(addedIndex.indexOf(randomID) > -1)
+    addedIndex.push(randomID)
+    quizArray.push(questions[randomID])
+  }
+  const [questionNum, setquestionNum] = useState(0)
   const [screen, setScreen] = useState('Start')
-  const [getQuestions, setQuestions] = useState(questions[questionID])
+  const [getQuestions, setQuestions] = useState(quizArray[0])
   const [score, setScore] = useState(0)
   const [validate, setValidate] = useState(0)
-  
+
   const changeScreen = () => {
     setScreen('Quiz')
   }
@@ -18,8 +27,8 @@ export default function App() {
   const checkAnswer = (selectedOption, correctOption, allOptions) => {
     setValidate(1)
     if (selectedOption === correctOption) {
-      Alert.alert("Your answer is correct!")
       setScore(score + 1)
+      Alert.alert("Your answer is correct!")
     }
     else {
       Alert.alert("Your answer was incorrect! \nCorrect answer: " + correctOption)
@@ -27,17 +36,17 @@ export default function App() {
   }
 
   const loadNextQuestion = () => {
-    questionID = questionID + 1
     setquestionNum(questionNum + 1)
-    setQuestions(questions[questionID])
+    setQuestions(questions[questionNum])
+    setValidate(0)
   }
 
 
   /* Start component */
   const startScreen = (
-    <View style={{paddingTop: 400}} >
+    <View style={{paddingTop: 400}}>
       <Text style={styles.titleText} >Welcome to the quiz app.</Text>   
-      <Button style={{width: '60%'}} title="Start Quiz" onPress={changeScreen} />
+      <Button style={{width: '60%'}} title="Start Quiz" onPress={changeScreen}/>
     </View>
   )
 
@@ -45,11 +54,12 @@ export default function App() {
   /* Quiz component */
   const quizScreen = (
     <View>
+      {questionNum === 5 ? startScreen : 
       <ScrollView style={quizStyles.scrollView}>
         <View>
           <View style={quizStyles.infoCont}>
-            <Text style={quizStyles.scoreText} >Score: {score}</Text>
-            <Text style={quizStyles.questionNum}>Question: {questionNum} / 5</Text>
+            <Text style={quizStyles.scoreText}>Score: {score} / 5</Text>
+            <Text style={quizStyles.questionNum}>Question: {questionNum + 1} / 5</Text>
           </View>
           <Text style={quizStyles.statement}>{getQuestions.statement}</Text>
           {getQuestions.options.map((optionItem, optionIndex) =>
@@ -61,9 +71,9 @@ export default function App() {
               </View>
             </TouchableOpacity>
           )}
-          <View style={quizStyles.buttonCont} >
+          <View style={quizStyles.buttonCont}>
             <ButtonComp 
-              textValue="Next"
+              textValue={questionNum === 4 ? 'Finish' : 'Next'}
               onPressEvent={loadNextQuestion}
               color='#06623B'
               disabled={validate == 0}
@@ -71,6 +81,7 @@ export default function App() {
           </View>
         </View>
       </ScrollView>
+      }
     </View>
   )
 
