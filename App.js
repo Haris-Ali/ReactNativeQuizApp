@@ -16,12 +16,18 @@ export default function App() {
     quizArray.push(questions[randomID])
   }
 
+
+  /* Ref for each element for the color change. 
+  Global variable to hold selected item's id used for reseting. */
+  const myRefs = React.useRef([])
+
   /* All the states being used in the app */
   const [questionNum, setquestionNum] = useState(0)
   const [screen, setScreen] = useState('Start')
   const [getQuestions, setQuestions] = useState(quizArray[0])
   const [score, setScore] = useState(0)
   const [validate, setValidate] = useState(0)
+  const [itemID, setitemID] = useState(0)
 
 
   /* Function to change screen when start quiz is pressed */
@@ -29,15 +35,18 @@ export default function App() {
     setScreen('Quiz')
   }
 
+
   /* Function which checks if the answer is correct or not */
-  const checkAnswer = (selectedOption, correctOption, allOptions) => {
+  const checkAnswer = (selectedOption, correctOption, selectedID) => {
     setValidate(1)
+    setitemID(selectedID)
     if (selectedOption === correctOption) {
       setScore(score + 1)
-      Alert.alert("Your answer is correct!")
+      myRefs.current[selectedID].setNativeProps({style: {backgroundColor: 'green'}})
     }
     else {
       Alert.alert("Your answer was incorrect! \nCorrect answer: " + correctOption)
+      myRefs.current[selectedID].setNativeProps({style: {backgroundColor: 'red'}})
     }
   }
 
@@ -46,7 +55,9 @@ export default function App() {
     setquestionNum(questionNum + 1)
     setQuestions(questions[questionNum])
     setValidate(0)
+    myRefs.current[itemID].setNativeProps({style: {backgroundColor: 'cornflowerblue'}})
   }
+
 
   /* Function that resets all states when quiz is finished and goes to start screen */
   const finishQuiz = () => {
@@ -80,8 +91,10 @@ export default function App() {
           {getQuestions.options.map((optionItem, optionIndex) =>
             <TouchableOpacity 
               activeOpacity={0.7} 
-              onPress={() => checkAnswer(optionItem, getQuestions.correctChoice, getQuestions.options)}>
-              <View style={quizStyles.choiceCont}>
+              onPress={() => checkAnswer(optionItem, getQuestions.correctChoice, optionIndex)}>
+              <View 
+                style={quizStyles.choiceCont}
+                ref={el => myRefs.current[optionIndex] = el}>
                 <Text style={quizStyles.choiceText}>{optionIndex + 1}. {optionItem}</Text>
               </View>
             </TouchableOpacity>
