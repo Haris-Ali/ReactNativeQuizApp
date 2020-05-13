@@ -28,6 +28,7 @@ export default function App() {
   const [score, setScore] = useState(0)
   const [validate, setValidate] = useState(0)
   const [itemID, setitemID] = useState(0)
+  const [getOptions, setOptions] = useState(false)
 
 
   /* Function to change screen when start quiz is pressed */
@@ -48,6 +49,7 @@ export default function App() {
       Alert.alert("Your answer was incorrect! \nCorrect answer: " + correctOption)
       myRefs.current[selectedID].setNativeProps({style: {backgroundColor: 'red'}})
     }
+    setOptions(true)
   }
 
   
@@ -57,6 +59,7 @@ export default function App() {
     setQuestions(questions[questionNum])
     setValidate(0)
     myRefs.current[itemID].setNativeProps({style: {backgroundColor: 'cornflowerblue'}})
+    setOptions(false)
   }
 
 
@@ -92,6 +95,7 @@ export default function App() {
           {getQuestions.options.map((optionItem, optionIndex) =>
             <TouchableOpacity 
               activeOpacity={0.7} 
+              disabled={getOptions}
               onPress={() => checkAnswer(optionItem, getQuestions.correctChoice, optionIndex)}>
               <View 
                 style={quizStyles.choiceCont}
